@@ -1,207 +1,283 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Models;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import Controllers.AccountController;
 import Controllers.AccountRoleController;
 import Controllers.ContactController;
 import Controllers.FamilyInfoController;
-import Controllers.StudentController;
 
-public class DatabaseModel {
+/**
+ *
+ * @author gurkay
+ */
+public class DatabaseModel extends ConnectionDb {
 
-	private final String url = "jdbc:postgresql://localhost:5432/school";
-	private final String user = "root";
-	private final String password = "root";
+    public void accountRecord(AccountController accountController, AccountRoleController accountRoleController, FamilyInfoController familyInfoController,
+            ContactController contactController) {
+        try {
+            Connection conn = openConnection();
 
-	Connection conn;
+            String queryAccount = "INSERT INTO account(user_name, password, create_on, last_login, tc, first_name, last_name, age, gender, year) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstAccount = conn.prepareStatement(queryAccount, Statement.RETURN_GENERATED_KEYS);
+            pstAccount.setString(1, accountController.getUserName());
+            pstAccount.setString(2, accountController.getPassword());
+            pstAccount.setDate(3, accountController.getCreatedOn());
+            pstAccount.setDate(4, accountController.getLastLogin());
+            pstAccount.setString(5, accountController.getTc());
+            pstAccount.setString(6, accountController.getFirstName());
+            pstAccount.setString(7, accountController.getLastName());
+            pstAccount.setShort(8, accountController.getAge());
+            pstAccount.setString(9, accountController.getGender());
+            pstAccount.setString(10, accountController.getYear());
+            pstAccount.executeUpdate();
+            pstAccount.close();
 
-	public Connection openConnection() throws ClassNotFoundException {
-		try {
-			Class.forName("org.postgresql.Driver");
-			conn = DriverManager.getConnection(url, user, password);
-			System.out.println("Database connected to the database successfully");
-		} catch (SQLException e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
-		}
-		return conn;
-	}
+            String queryFamilyInfo = "INSERT INTO family_info(account_id, mother_name, mother_job, father_name, father_job) VALUES((SELECT MAX(account_id) FROM account), ?, ?, ?, ?)";
+            PreparedStatement pstFamilyInfo = conn.prepareStatement(queryFamilyInfo, Statement.RETURN_GENERATED_KEYS);
+            pstFamilyInfo.setString(1, familyInfoController.getMotherName());
+            pstFamilyInfo.setString(2, familyInfoController.getMotherJob());
+            pstFamilyInfo.setString(3, familyInfoController.getFatherName());
+            pstFamilyInfo.setString(4, familyInfoController.getFatherJob());
+            pstFamilyInfo.executeUpdate();
+            pstFamilyInfo.close();
 
-	public void closeConnection() {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
-		}
-	}
+            String queryContact = "INSERT INTO contact(account_id, phone_number, mail, address) VALUES((SELECT MAX(account_id) FROM account), ?, ?, ?)";
+            PreparedStatement pstContact = conn.prepareStatement(queryContact, Statement.RETURN_GENERATED_KEYS);
+            pstContact.setString(1, contactController.getPhoneNumber());
+            pstContact.setString(2, contactController.getMail());
+            pstContact.setString(3, contactController.getAddress());
+            pstContact.executeUpdate();
+            pstContact.close();
 
-	public void accountRecord(AccountController accountController, AccountRoleController accountRoleController,
-			StudentController studentController, FamilyInfoController familyInfoController,
-			ContactController contactController) {
-		try {
-			Connection conn = openConnection();
+            String queryAccountRole = "INSERT INTO account_role(account_id, role_id, grant_date) VALUES((SELECT MAX(account_id) FROM account), ?, ?)";
+            PreparedStatement pstAccountRole = conn.prepareStatement(queryAccountRole);
+            pstAccountRole.setInt(1, accountRoleController.getRoleID());
+            pstAccountRole.setDate(2, accountRoleController.getGrantDate());
+            pstAccountRole.executeUpdate();
+            pstAccountRole.close();
 
-			String queryAccount = "INSERT INTO account(user_name, password, create_on, last_login, tc) VALUES(?, ?, ?, ?, ?)";
-			PreparedStatement pstAccount = conn.prepareStatement(queryAccount, Statement.RETURN_GENERATED_KEYS);
-			pstAccount.setString(1, accountController.getUserName());
-			pstAccount.setString(2, accountController.getPassword());
-			pstAccount.setDate(3, accountController.getCreatedOn());
-			pstAccount.setDate(4, accountController.getLastLogin());
-			pstAccount.setInt(5, accountController.getTc());
-			pstAccount.executeUpdate();
-			pstAccount.close();
+            closeConnection();
 
-			String queryAccountRole = "INSERT INTO account_role(account_id, role_id, grant_date) VALUES((SELECT MAX(account_id) FROM account), ?, ?)";
-			PreparedStatement pstAccountRole = conn.prepareStatement(queryAccountRole);
-			pstAccountRole.setInt(1, accountRoleController.getRoleID());
-			pstAccountRole.setDate(2, accountRoleController.getGrantDate());
-			pstAccountRole.executeUpdate();
-			pstAccountRole.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-			String queryStudent = "INSERT INTO student(account_id, first_name, last_name, tc, age, gender) VALUES((SELECT MAX(account_id) FROM account), ?, ?, ?, ?, ?)";
-			PreparedStatement pstStudent = conn.prepareStatement(queryStudent, Statement.RETURN_GENERATED_KEYS);
-			pstStudent.setString(1, studentController.getFirstName());
-			pstStudent.setString(2, studentController.getLastName());
-			pstStudent.setInt(3, studentController.getTC());
-			pstStudent.setShort(4, studentController.getAge());
-			pstStudent.setString(5, String.valueOf(studentController.getGender()));
-			pstStudent.executeUpdate();
-			pstStudent.close();
+    public List<Object[]> accountShowAllRecord() {
+        int columnCount;
 
-			String queryFamilyInfo = "INSERT INTO family_info(student_id, mother_name, mother_job, father_name, father_job) VALUES((SELECT MAX(student_id) FROM student), ?, ?, ?, ?)";
-			PreparedStatement pstFamilyInfo = conn.prepareStatement(queryFamilyInfo, Statement.RETURN_GENERATED_KEYS);
-			pstFamilyInfo.setString(1, familyInfoController.getMotherName());
-			pstFamilyInfo.setString(2, familyInfoController.getMotherJob());
-			pstFamilyInfo.setString(3, familyInfoController.getFatherName());
-			pstFamilyInfo.setString(4, familyInfoController.getFatherJob());
-			pstFamilyInfo.executeUpdate();
-			pstFamilyInfo.close();
+        List<Object[]> accounts = new ArrayList<Object[]>();
 
-			String queryContact = "INSERT INTO contact(student_id, phone_number, mail, address) VALUES((SELECT MAX(student_id) FROM student), ?, ?, ?)";
-			PreparedStatement pstContact = conn.prepareStatement(queryContact, Statement.RETURN_GENERATED_KEYS);
-			pstContact.setString(1, contactController.getPhoneNumber());
-			pstContact.setString(2, contactController.getMail());
-			pstContact.setString(3, contactController.getAddress());
-			pstContact.executeUpdate();
-			pstContact.close();
+        try {
+            Connection conn = openConnection();
+            String query = "SELECT a.account_id, a.tc, a.user_name, a.first_name, a.last_name, rl.role_name FROM account a, account_role ar, role rl WHERE a.account_id = ar.account_id AND ar.role_id = rl.role_id";
 
-			closeConnection();
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            columnCount = rs.getMetaData().getColumnCount();
 
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-	}
+            while (rs.next()) {
+                Object[] header = {"accountID", "tc", "user_name", "first_name", "last_name", "role_name"};
 
-	public List<Object[]> accountShowAllRecord() {
-		int columnCount;
+                header[0] = rs.getInt("account_id");
+                header[1] = rs.getInt("tc");
+                header[2] = rs.getString("user_name");
+                header[3] = rs.getString("first_name");
+                header[4] = rs.getString("last_name");
+                header[5] = rs.getString("role_name");
+                accounts.add(header);
+            }
+            closeConnection();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return accounts;
+    }
 
-		List<Object[]> accounts = new ArrayList<Object[]>();
+    public List<Object[]> accountInstructorShowAllRecord() {
+        int columnCount;
 
-		try {
-			Connection conn = openConnection();
-			String query = "SELECT * FROM account a, account_role ar, role r WHERE a.account_id = ar.account_id AND ar.role_id = r.role_id";
+        List<Object[]> accounts = new ArrayList<Object[]>();
 
-			PreparedStatement pst = conn.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
-			columnCount = rs.getMetaData().getColumnCount();
+        try {
+            Connection conn = openConnection();
+            String query = "SELECT a.account_id, a.tc, a.user_name, a.first_name, a.last_name, rl.role_name "
+                    + "FROM account a "
+                    + "JOIN account_role ar ON a.account_id = ar.account_id "
+                    + "JOIN role rl ON ar.role_id = rl.role_id "
+                    + "WHERE ar.role_id = 4";
 
-			while (rs.next()) {
-				Object[] header = { "accountID", "userName", "password", "createOn", "lastLogin", "accountID", "roleID",
-						"grantDate", "roleID", "roleName", "tc" };
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
 
-				header[0] = rs.getInt("account_id");
-				header[1] = rs.getString("user_name");
-				header[2] = rs.getString("password");
-				header[3] = rs.getDate("create_on");
-				header[4] = rs.getDate("last_login");
-				header[5] = rs.getInt("account_id");
-				header[6] = rs.getInt("role_id");
-				header[7] = rs.getDate("grant_date");
-				header[8] = rs.getInt("role_id");
-				header[9] = rs.getString("role_name");
-				header[10] = rs.getString("tc");
-				accounts.add(header);
-			}
-			closeConnection();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return accounts;
-	}
+            while (rs.next()) {
+                Object[] header = {"accountID", "tc", "user_name", "first_name", "last_name", "role_name"};
 
-	public AccountController accountFind(int tc) {
-		AccountController accountController = new AccountController();
-		StudentController studentController = new StudentController();
-		FamilyInfoController familyInfoController = new FamilyInfoController();
-		ContactController contactController = new ContactController();
-		try {
-			Connection conn = openConnection();
-			String query = "SELECT * FROM account a, account_role ar, role r, student s, family_info f, contact c "
-					+ "WHERE a.account_id = s.account_id " + "AND a.account_id = ar.account_id "
-					+ "AND ar.role_id = r.role_id " + "AND s.student_id = f.student_id "
-					+ "AND s.student_id = c.student_id " + "AND a.tc = ?";
-			PreparedStatement pst = conn.prepareStatement(query);
-			pst.setInt(1, tc);
-			ResultSet rs = pst.executeQuery();
+                header[0] = rs.getInt("account_id");
+                header[1] = rs.getInt("tc");
+                header[2] = rs.getString("user_name");
+                header[3] = rs.getString("first_name");
+                header[4] = rs.getString("last_name");
+                header[5] = rs.getString("role_name");
+                accounts.add(header);
+            }
+            closeConnection();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return accounts;
+    }
 
-			while (rs.next()) {
-				accountController.setUserName(rs.getString("user_name"));
-				accountController.setPassword(rs.getString("password"));
-				accountController.setTc(rs.getInt("tc"));
+    public AccountController accountFind(int tc) {
+        AccountController accountController = new AccountController();
+        FamilyInfoController familyInfoController = new FamilyInfoController();
+        ContactController contactController = new ContactController();
+        try {
+            Connection conn = openConnection();
+            String query = "SELECT * FROM account a, account_role ar, role r, family_info f, contact c "
+                    + "WHERE a.account_id = ar.account_id "
+                    + "AND ar.role_id = r.role_id " + "AND a.account_id = f.account_id "
+                    + "AND a.account_id = c.account_id " + "AND a.tc = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, tc);
+            ResultSet rs = pst.executeQuery();
 
-				studentController.setFirstName(rs.getString("first_name"));
-				studentController.setLastName(rs.getString("last_name"));
-				studentController.setTC(rs.getInt("tc"));
-				studentController.setAge(rs.getShort("age"));
-				studentController.setGender(rs.getString("gender").charAt(0));
-				accountController.setStudentController(studentController);
+            while (rs.next()) {
+                accountController.setAccountId(rs.getInt("account_id"));
+                accountController.setUserName(rs.getString("user_name"));
+                accountController.setPassword(rs.getString("password"));
+                accountController.setTc(rs.getString("tc"));
 
-				familyInfoController.setMotherName(rs.getString("mother_name"));
-				familyInfoController.setMotherJob(rs.getString("mother_job"));
-				familyInfoController.setFatherName(rs.getString("father_name"));
-				familyInfoController.setFatherJob(rs.getString("father_job"));
-				accountController.setFamilyInfoController(familyInfoController);
+                accountController.setFirstName(rs.getString("first_name"));
+                accountController.setLastName(rs.getString("last_name"));
+                accountController.setAge(rs.getShort("age"));
+                accountController.setGender(rs.getString("gender"));
 
-				contactController.setPhoneNumber(rs.getString("phone_number"));
-				contactController.setMail(rs.getString("mail"));
-				contactController.setAddress(rs.getString("address"));
-				accountController.setContactController(contactController);
-			}
+                familyInfoController.setMotherName(rs.getString("mother_name"));
+                familyInfoController.setMotherJob(rs.getString("mother_job"));
+                familyInfoController.setFatherName(rs.getString("father_name"));
+                familyInfoController.setFatherJob(rs.getString("father_job"));
+                accountController.setFamilyInfoController(familyInfoController);
 
-			pst.close();
-			closeConnection();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return accountController;
-	}
-	
-	public void accountDelete(int tc) {
-		
-		try {
-			Connection conn = openConnection();
-			String query = "DELETE FROM account a WHERE a.tc = ?";
-			PreparedStatement pst = conn.prepareStatement(query);
-			pst.setInt(1, tc);
-			pst.executeUpdate();
-			pst.close();
-			closeConnection();
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-	}
+                contactController.setPhoneNumber(rs.getString("phone_number"));
+                contactController.setMail(rs.getString("mail"));
+                contactController.setAddress(rs.getString("address"));
+                accountController.setContactController(contactController);
+            }
+
+            pst.close();
+            closeConnection();
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return accountController;
+    }
+    
+    public AccountController accountIDFind(int accountID) {
+        AccountController accountController = new AccountController();
+        FamilyInfoController familyInfoController = new FamilyInfoController();
+        ContactController contactController = new ContactController();
+        try {
+            Connection conn = openConnection();
+            String query = "SELECT * FROM account a, account_role ar, role r, family_info f, contact c "
+                    + "WHERE a.account_id = ar.account_id "
+                    + "AND ar.role_id = r.role_id " + "AND a.account_id = f.account_id "
+                    + "AND a.account_id = c.account_id " + "AND a.account_id = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, accountID);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                accountController.setAccountId(rs.getInt("account_id"));
+                accountController.setUserName(rs.getString("user_name"));
+                accountController.setPassword(rs.getString("password"));
+                accountController.setTc(rs.getString("tc"));
+
+                accountController.setFirstName(rs.getString("first_name"));
+                accountController.setLastName(rs.getString("last_name"));
+                accountController.setAge(rs.getShort("age"));
+                accountController.setGender(rs.getString("gender"));
+
+                familyInfoController.setMotherName(rs.getString("mother_name"));
+                familyInfoController.setMotherJob(rs.getString("mother_job"));
+                familyInfoController.setFatherName(rs.getString("father_name"));
+                familyInfoController.setFatherJob(rs.getString("father_job"));
+                accountController.setFamilyInfoController(familyInfoController);
+
+                contactController.setPhoneNumber(rs.getString("phone_number"));
+                contactController.setMail(rs.getString("mail"));
+                contactController.setAddress(rs.getString("address"));
+                accountController.setContactController(contactController);
+            }
+
+            pst.close();
+            closeConnection();
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return accountController;
+    }
+
+    public AccountController accountLoginFind(int account_id, String password) {
+        AccountController accountController = new AccountController();
+        AccountRoleController accountRoleController = new AccountRoleController();
+        try {
+            Connection conn = openConnection();
+            String query = "SELECT * FROM account a, account_role ar, role r "
+                    + "WHERE a.account_id = ar.account_id "
+                    + "AND ar.role_id = r.role_id "
+                    + "AND a.account_id = ? AND a.password = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, account_id);
+            pst.setString(2, password);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                accountController.setAccount_id(rs.getInt("account_id"));
+                accountController.setUserName(rs.getString("user_name"));
+                accountController.setPassword(rs.getString("password"));
+                accountController.setTc(rs.getString("tc"));
+
+                accountRoleController.setRoleID(rs.getInt("role_id"));
+                accountController.setAccountRoleController(accountRoleController);
+            }
+
+            pst.close();
+            closeConnection();
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return accountController;
+    }
+
+    public void accountDelete(int tc) {
+
+        try {
+            Connection conn = openConnection();
+            String query = "DELETE FROM account a WHERE a.tc = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, tc);
+            pst.executeUpdate();
+            pst.close();
+            closeConnection();
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
 }

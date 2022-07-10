@@ -1,17 +1,20 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Controllers;
+
 import java.sql.Date;
 
+/**
+ *
+ * @author gurkay
+ */
 public class AccountRoleController extends AccountController {
-	private int accountID;
 	private int roleID;
 	private Date grantDate;
 	
-	public int getAccountID() {
-		return accountID;
-	}
-	public void setAccountID(int accountID) {
-		this.accountID = accountID;
-	}
 	public int getRoleID() {
 		return roleID;
 	}
@@ -24,5 +27,4 @@ public class AccountRoleController extends AccountController {
 	public void setGrantDate(Date grantDate) {
 		this.grantDate = grantDate;
 	}
-
 }

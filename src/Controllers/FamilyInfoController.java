@@ -1,6 +1,15 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Controllers;
 
-public class FamilyInfoController extends StudentController {
+/**
+ *
+ * @author gurkay
+ */
+public class FamilyInfoController extends AccountController {
 	private String motherJob;
 	private String motherName;
 	private String fatherJob;

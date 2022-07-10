@@ -5,15 +5,10 @@
  */
 package Controllers;
 
-import Views.JFrameLoginView;
-
 /**
  *
  * @author gurkay
  */
-public class SchoolAutomationController {
-    public void startAplication() {
-        JFrameLoginView jFrameLoginView = new JFrameLoginView();
-	jFrameLoginView.setVisible(true);
-    }    
+public class GlobalConstants {
+    public static int globalConst_account_id;
 }
