@@ -4,3 +4,7 @@
 Operating Systems: Microsoft Windows – Ubuntu Linux
 Programming Languages: Java and SQL
 Technologies: NetBeans and PostgreSQL
+
+Dependencies:  
+material-ui: npm install @material-ui/core  
+react-qr-code: yarn add react-qr-code 
