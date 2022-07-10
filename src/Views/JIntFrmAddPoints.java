@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JIntFrmAddPoints extends javax.swing.JInternalFrame {
 

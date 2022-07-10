@@ -7,7 +7,7 @@ package Controllers;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class CoursesController {
 

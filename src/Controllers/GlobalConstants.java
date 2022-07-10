@@ -7,7 +7,7 @@ package Controllers;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class GlobalConstants {
     public static int globalConst_account_id;

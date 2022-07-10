@@ -7,7 +7,7 @@ package Controllers;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class InstructionOfCourseController extends CoursesController{
     private int instructionOfCourseId;

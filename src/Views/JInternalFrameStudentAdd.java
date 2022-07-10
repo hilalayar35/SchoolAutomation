@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JInternalFrameStudentAdd extends javax.swing.JInternalFrame {
 

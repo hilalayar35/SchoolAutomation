@@ -20,7 +20,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JInternalFrameInstructionOfCourseAdd extends javax.swing.JInternalFrame {
 

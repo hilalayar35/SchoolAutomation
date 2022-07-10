@@ -9,7 +9,7 @@ import java.sql.Date;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class AccountRoleController extends AccountController {
 	private int roleID;

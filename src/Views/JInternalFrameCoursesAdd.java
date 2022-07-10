@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JInternalFrameCoursesAdd extends javax.swing.JInternalFrame {
 

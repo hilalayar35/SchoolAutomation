@@ -9,7 +9,7 @@ import Controllers.SchoolAutomationController;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class MainCollections {
 

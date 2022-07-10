@@ -7,7 +7,7 @@ package Views;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JFrameMainInstructor extends javax.swing.JFrame {
 

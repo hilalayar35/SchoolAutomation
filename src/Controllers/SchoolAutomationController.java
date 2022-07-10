@@ -9,7 +9,7 @@ import Views.JFrameLoginView;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class SchoolAutomationController {
     public void startAplication() {

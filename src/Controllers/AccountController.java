@@ -10,7 +10,7 @@ import java.sql.Date;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class AccountController {
 

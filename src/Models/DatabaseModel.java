@@ -19,7 +19,7 @@ import Controllers.FamilyInfoController;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class DatabaseModel extends ConnectionDb {
 

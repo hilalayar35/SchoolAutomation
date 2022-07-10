@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JFrameLoginView extends javax.swing.JFrame {
 

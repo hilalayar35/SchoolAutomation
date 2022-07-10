@@ -7,7 +7,7 @@ package Controllers;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class FamilyInfoController extends AccountController {
 	private String motherJob;

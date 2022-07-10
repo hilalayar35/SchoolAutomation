@@ -16,7 +16,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JInternalFrameAccountList extends javax.swing.JInternalFrame {
 

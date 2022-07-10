@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class CoursesDbModel extends ConnectionDb {
 

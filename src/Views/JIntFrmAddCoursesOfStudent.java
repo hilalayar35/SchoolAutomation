@@ -22,7 +22,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JIntFrmAddCoursesOfStudent extends javax.swing.JInternalFrame {
 

@@ -9,7 +9,7 @@ import java.util.Locale;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JFrameMain extends javax.swing.JFrame {
 

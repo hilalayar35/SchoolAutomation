@@ -7,7 +7,7 @@ package Views;
 
 /**
  *
- * @author gurkay
+ * 
  */
 public class JFrameMainStudent extends javax.swing.JFrame {
 
