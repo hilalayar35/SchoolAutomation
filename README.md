@@ -7,6 +7,9 @@ Programming Languages: Java and SQL
 
 Technologies: NetBeans and PostgreSQL
 
-Entity Relationship Diagram![image](https://user-images.githubusercontent.com/108615689/178155250-78c7d6d5-4356-4553-8fb7-cf5b11bf1954.png)
+Entity Relationship Diagram
+
+![image](https://user-images.githubusercontent.com/108615689/178155268-d7b79a07-8676-4001-81ab-a71f3e615586.png)
+
 
 
